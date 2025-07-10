@@ -4,10 +4,6 @@ FROM ubuntu:22.04
 # Set non-interactive mode for apt
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Build arguments for dynamic versioning
-ARG VERSION=28569
-ARG JAR_URL=https://github.com/kolmafia/kolmafia/releases/download/r28569/KoLmafia-28569.jar
-
 # Install essential packages, XFCE, and VNC server
 # Temporarily switch to root for installations
 USER root
@@ -98,10 +94,6 @@ ENV APP_DIR=/opt/kolmafia
 # Create a directory for your application with proper permissions
 RUN mkdir -p $APP_DIR && chmod 755 $APP_DIR && chown docker:docker $APP_DIR
 
-# Copy your JAR file into the container (use build arg for dynamic versioning)
-RUN wget $JAR_URL -O $APP_DIR/kolmafia.jar && \
-    chown docker:docker $APP_DIR/kolmafia.jar
-
 # Create supervisord directories and set permissions
 RUN mkdir -p /var/log/supervisor /var/run/supervisor && \
     chown -R docker:docker /var/log/supervisor /var/run/supervisor
@@ -123,9 +115,20 @@ ENV DISPLAY=:1
 # Add labels for better container management
 LABEL org.opencontainers.image.title="KoLmafia Container"
 LABEL org.opencontainers.image.description="KoLmafia game client in a VNC-enabled container"
-LABEL org.opencontainers.image.version="$VERSION"
 LABEL org.opencontainers.image.source="https://github.com/kolmafia/kolmafia"
 LABEL maintainer="Your Name <your.email@example.com>"
+
+# Build arguments for dynamic versioning (moved to end for layer optimization)
+ARG VERSION=28569
+ARG JAR_URL=https://github.com/kolmafia/kolmafia/releases/download/r28569/KoLmafia-28569.jar
+
+# Copy your JAR file into the container (use build arg for dynamic versioning)
+# This is moved to the end to optimize layer caching
+RUN wget $JAR_URL -O $APP_DIR/kolmafia.jar && \
+    chown docker:docker $APP_DIR/kolmafia.jar
+
+# Add version-specific label at the end to optimize layer caching
+LABEL org.opencontainers.image.version="$VERSION"
 
 # Command to run when the container starts (run as root to manage services)
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
