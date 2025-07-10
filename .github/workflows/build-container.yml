@@ -57,8 +57,6 @@ jobs:
     - name: Build and push Docker image
       if: steps.get-release.outputs.skip != 'true'
       run: |
-        cd debug/kolmafia
-
         # Update the Dockerfile with the new version
         sed -i "s|r28569|r${{ steps.get-release.outputs.version }}|g" Dockerfile
         sed -i "s|KoLmafia-28569.jar|KoLmafia-${{ steps.get-release.outputs.version }}.jar|g" Dockerfile
