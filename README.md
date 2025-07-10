@@ -127,41 +127,6 @@ docker run -v ~/kolmafia-data:/home/docker/.kolmafia ...
 - Verify Java installation: `docker exec kolmafia java -version`
 - Check VNC desktop is running: `docker exec kolmafia ps aux | grep xfce`
 
-### Performance Issues
-- Increase Docker memory allocation
-- Use SSD storage for volumes
-- Consider running on a dedicated server
-
-## Development
-
-### Building for Different Architectures
-```bash
-# Build for multiple platforms
-docker buildx build --platform linux/amd64,linux/arm64 \
-  -t ghcr.io/your-username/kolmafia:latest .
-```
-
-### Testing New Versions
-```bash
-# Test with a specific version
-docker build --build-arg VERSION=28570 -t kolmafia:test .
-docker run -d -p 6901:6901 -p 5901:5901 kolmafia:test
-```
-
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## Support
-
-- **Issues**: Create an issue on GitHub
-- **Discussions**: Use GitHub Discussions for questions
-- **KoLmafia**: Visit [KoLmafia GitHub](https://github.com/kolmafia/kolmafia)
